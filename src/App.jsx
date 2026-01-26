@@ -17,26 +17,30 @@ function App() {
     const syncUser = async () => {
       if (isSignedIn && user && !synced) {
         try {
-          console.log('🔄 Syncing user to backend:', {
-            clerkUserId: user.id,
-            email: user.primaryEmailAddress?.emailAddress,
-            firstName: user.firstName,
-            lastName: user.lastName
-          });
-          
-          const response = await axiosInstance.post("/api/users/sync", {
+          const userData = {
             clerkUserId: user.id,
             email: user.primaryEmailAddress?.emailAddress,
             firstName: user.firstName,
             lastName: user.lastName,
             imageUrl: user.imageUrl,
-          });
+          };
+          
+          console.log('🔄 Syncing user to backend:', userData);
+          console.log('📡 Backend URL:', import.meta.env.VITE_API_URL);
+          
+          const response = await axiosInstance.post("/api/users/sync", userData);
           
           console.log("✅ User synced to MongoDB:", response.data);
           setSynced(true);
         } catch (error) {
-          console.error("❌ Failed to sync user:", error.response?.data || error.message);
+          console.error("❌ Failed to sync user:");
+          console.error("Error message:", error.message);
+          console.error("Error response:", error.response?.data);
+          console.error("Error status:", error.response?.status);
           console.error("Full error:", error);
+          
+          // Show alert for debugging
+          alert(`Sync failed: ${error.response?.status || error.message}\nCheck console for details`);
         }
       }
     };
