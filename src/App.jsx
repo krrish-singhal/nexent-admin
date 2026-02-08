@@ -1,21 +1,23 @@
-import "./App.css";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  useUser,
-} from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router";
+import LoginPage from "./pages/LoginPage";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import DashboardPage from "./pages/DashboardPage";
+import ProductsPage from "./pages/ProductsPage";
+import OrdersPage from "./pages/OrdersPage";
+import CustomersPage from "./pages/CustomerPage";
+import DashboardLayout from "./layout/DashboardLayout";
+import { useEffect } from "react";
 import axiosInstance from "./lib/axios";
 
+import PageLoader from "./components/PageLoader";
+
 function App() {
-  const { user, isSignedIn } = useUser();
-  const [synced, setSynced] = useState(false);
+  const { isSignedIn, isLoaded } = useAuth();
+  const { user } = useUser();
 
   useEffect(() => {
     const syncUser = async () => {
-      if (isSignedIn && user && !synced) {
+      if (isSignedIn && user) {
         try {
           const userData = {
             clerkUserId: user.id,
@@ -24,51 +26,37 @@ function App() {
             lastName: user.lastName,
             imageUrl: user.imageUrl,
           };
-          
-          console.log('🔄 Syncing user to backend:', userData);
-          console.log('📡 Backend URL:', import.meta.env.VITE_API_URL);
-          
-          const response = await axiosInstance.post("/api/users/sync", userData);
-          
-          console.log("✅ User synced to MongoDB:", response.data);
-          setSynced(true);
-        } catch (error) {
-          console.error("❌ Failed to sync user:");
-          console.error("Error message:", error.message);
-          console.error("Error response:", error.response?.data);
-          console.error("Error status:", error.response?.status);
-          console.error("Full error:", error);
-          
-          // Show alert for debugging
-          alert(`Sync failed: ${error.response?.status || error.message}\nCheck console for details`);
+
+          await axiosInstance.post("/api/users/sync", userData);
+        } catch {
+          // Error intentionally ignored
         }
       }
     };
 
     syncUser();
-  }, [isSignedIn, user, synced]);
+  }, [isSignedIn, user]);
+
+  if (!isLoaded) return <PageLoader />;
 
   return (
-    <div style={{ padding: "20px" }}>
-      <header style={{ marginBottom: "20px" }}>
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-      </header>
-      <main>
-        <h1>Welcome to Nexent</h1>
-        <SignedOut>
-          <p>Please sign in to continue.</p>
-        </SignedOut>
-        <SignedIn>
-          <p>You are signed in!</p>
-          {synced && <p style={{ color: "green" }}>✅ Synced to database</p>}
-        </SignedIn>
-      </main>
-    </div>
+    <Routes>
+      <Route
+        path="/login"
+        element={isSignedIn ? <Navigate to={"/dashboard"} /> : <LoginPage />}
+      />
+
+      <Route
+        path="/"
+        element={isSignedIn ? <DashboardLayout /> : <Navigate to={"/login"} />}
+      >
+        <Route index element={<Navigate to={"dashboard"} />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="products" element={<ProductsPage />} />
+        <Route path="orders" element={<OrdersPage />} />
+        <Route path="customers" element={<CustomersPage />} />
+      </Route>
+    </Routes>
   );
 }
 
