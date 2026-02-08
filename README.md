@@ -38,16 +38,19 @@ A modern, responsive admin dashboard for managing the Nexent e-commerce platform
 ## 🔧 Installation
 
 ### 1. Navigate to admin directory
+
 ```bash
 cd admin/nexent
 ```
 
 ### 2. Install dependencies
+
 ```bash
 npm install
 ```
 
 ### 3. Configure environment variables
+
 Create a `.env` file in the root directory:
 
 ```env
@@ -63,6 +66,7 @@ VITE_SENTRY_AUTH_TOKEN=xxxxx
 ```
 
 ### 4. Start development server
+
 ```bash
 npm run dev
 ```
@@ -107,11 +111,13 @@ admin/nexent/
 ## 🔐 Authentication
 
 ### Admin Access Requirements:
+
 - Must sign in with a **@nexent.in** email address
 - Other email domains are restricted from accessing admin features
 - Clerk handles authentication and user session management
 
 ### Login Flow:
+
 1. Navigate to `/login`
 2. Click "Continue with Google" (or other OAuth provider)
 3. Sign in with your @nexent.in email
@@ -120,7 +126,9 @@ admin/nexent/
 ## 📊 Dashboard Features
 
 ### 1. Dashboard Page (`/dashboard`)
+
 **Overview Analytics:**
+
 - Total Revenue (real-time)
 - Total Orders count
 - Total Products in catalog
@@ -132,7 +140,9 @@ admin/nexent/
 **API Endpoint:** `GET /api/admin/stats`
 
 ### 2. Products Page (`/products`)
+
 **Features:**
+
 - View all products in a searchable table
 - Add new products with image uploads (up to 3 images)
 - Edit existing products (name, description, price, stock, category)
@@ -142,6 +152,7 @@ admin/nexent/
 - Return policy configuration (returnable, refundable, return days)
 
 **Product Form Fields:**
+
 - Name
 - Description
 - Price
@@ -154,13 +165,16 @@ admin/nexent/
   - Return Days (0-30)
 
 **API Endpoints:**
+
 - `GET /api/admin/products` - Fetch all products
 - `POST /api/admin/products` - Create product
 - `PUT /api/admin/products/:id` - Update product
 - `DELETE /api/admin/products/:id` - Delete product
 
 ### 3. Orders Page (`/orders`)
+
 **Features:**
+
 - View all orders from all customers
 - Filter by order status
 - Update order status
@@ -169,6 +183,7 @@ admin/nexent/
 - Order timeline
 
 **Order Statuses:**
+
 - Pending
 - Processing
 - Shipped
@@ -176,6 +191,7 @@ admin/nexent/
 - Cancelled
 
 **Order Information Displayed:**
+
 - Order ID
 - Customer name and email
 - Order date
@@ -186,11 +202,14 @@ admin/nexent/
 - Current status
 
 **API Endpoints:**
+
 - `GET /api/admin/orders` - Fetch all orders
 - `PATCH /api/admin/orders/:orderId/status` - Update order status
 
 ### 4. Customers Page (`/customers`)
+
 **Features:**
+
 - View all registered customers
 - Customer statistics
 - Total orders per customer
@@ -199,6 +218,7 @@ admin/nexent/
 - Contact information
 
 **Customer Information Displayed:**
+
 - Name
 - Email
 - Phone (if provided)
@@ -214,9 +234,11 @@ admin/nexent/
 ## 🎨 UI Components
 
 ### DashboardStats Component
+
 Displays key business metrics in card format with icons and trend indicators.
 
 ### ProductsTable Component
+
 - Sortable columns
 - Pagination
 - Search functionality
@@ -225,6 +247,7 @@ Displays key business metrics in card format with icons and trend indicators.
 - Stock indicators (Low stock warnings)
 
 ### OrdersTable Component
+
 - Status badges (color-coded)
 - Expandable row details
 - Quick status update dropdown
@@ -232,6 +255,7 @@ Displays key business metrics in card format with icons and trend indicators.
 - Payment status indicators
 
 ### ProductForm Component
+
 - Multi-image upload with preview
 - Form validation
 - Category dropdown
@@ -239,6 +263,7 @@ Displays key business metrics in card format with icons and trend indicators.
 - Real-time preview
 
 ### Sidebar Component
+
 - Navigation menu
 - Active route highlighting
 - User profile section
@@ -250,41 +275,45 @@ Displays key business metrics in card format with icons and trend indicators.
 ### TanStack Query (React Query) Usage:
 
 **Products:**
+
 ```javascript
 const { data: products, isLoading } = useQuery({
-  queryKey: ['admin-products'],
-  queryFn: fetchProducts
+  queryKey: ["admin-products"],
+  queryFn: fetchProducts,
 });
 ```
 
 **Orders:**
+
 ```javascript
 const { data: orders } = useQuery({
-  queryKey: ['admin-orders'],
-  queryFn: fetchOrders
+  queryKey: ["admin-orders"],
+  queryFn: fetchOrders,
 });
 ```
 
 **Mutations:**
+
 ```javascript
 const updateProductMutation = useMutation({
   mutationFn: updateProduct,
   onSuccess: () => {
-    queryClient.invalidateQueries(['admin-products']);
-    toast.success('Product updated!');
-  }
+    queryClient.invalidateQueries(["admin-products"]);
+    toast.success("Product updated!");
+  },
 });
 ```
 
 ## 📡 API Integration
 
 ### Axios Configuration
+
 Located in `src/lib/axios.js`:
 
 ```javascript
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true
+  withCredentials: true,
 });
 
 // Request interceptor for auth token
@@ -298,20 +327,21 @@ axiosInstance.interceptors.request.use((config) => {
 ```
 
 ### Making API Calls
+
 ```javascript
 // GET request
-const products = await axiosInstance.get('/api/admin/products');
+const products = await axiosInstance.get("/api/admin/products");
 
 // POST request with FormData (for file uploads)
 const formData = new FormData();
-formData.append('name', 'Product Name');
-formData.append('images', file1);
-formData.append('images', file2);
-await axiosInstance.post('/api/admin/products', formData);
+formData.append("name", "Product Name");
+formData.append("images", file1);
+formData.append("images", file2);
+await axiosInstance.post("/api/admin/products", formData);
 
 // PATCH request
 await axiosInstance.patch(`/api/admin/orders/${orderId}/status`, {
-  status: 'shipped'
+  status: "shipped",
 });
 ```
 
@@ -320,24 +350,33 @@ await axiosInstance.patch(`/api/admin/orders/${orderId}/status`, {
 ### TailwindCSS with DaisyUI Themes
 
 **Available Themes:**
+
 - Light (default)
 - Dark
 - Cupcake
 - Corporate
 
 **Custom Classes:**
+
 ```css
 /* Card */
-.card { @apply bg-base-100 shadow-xl rounded-lg p-6; }
+.card {
+  @apply bg-base-100 shadow-xl rounded-lg p-6;
+}
 
 /* Button Primary */
-.btn-primary { @apply bg-primary text-white hover:bg-primary-focus; }
+.btn-primary {
+  @apply bg-primary text-white hover:bg-primary-focus;
+}
 
 /* Badge */
-.badge-success { @apply bg-success text-white; }
+.badge-success {
+  @apply bg-success text-white;
+}
 ```
 
 **Responsive Design:**
+
 ```jsx
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
   {/* Cards */}
@@ -349,45 +388,52 @@ await axiosInstance.patch(`/api/admin/orders/${orderId}/status`, {
 Using **react-hot-toast** for user feedback:
 
 ```javascript
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 // Success
-toast.success('Product created successfully!');
+toast.success("Product created successfully!");
 
 // Error
-toast.error('Failed to update order');
+toast.error("Failed to update order");
 
 // Loading
-const loadingToast = toast.loading('Uploading images...');
+const loadingToast = toast.loading("Uploading images...");
 toast.dismiss(loadingToast);
 
 // Custom
-toast('Custom message', { icon: '🎉' });
+toast("Custom message", { icon: "🎉" });
 ```
 
 ## 🚀 Build and Deployment
 
 ### Development Build
+
 ```bash
 npm run dev
 ```
+
 Starts Vite dev server at `http://localhost:5173`
 
 ### Production Build
+
 ```bash
 npm run build
 ```
+
 Creates optimized production build in `dist/` folder
 
 ### Preview Production Build
+
 ```bash
 npm run preview
 ```
+
 Serves production build locally for testing
 
 ### Deployment Options
 
 #### 1. Vercel (Recommended)
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -397,6 +443,7 @@ vercel --prod
 ```
 
 #### 2. Netlify
+
 ```bash
 # Build command
 npm run build
@@ -406,6 +453,7 @@ dist
 ```
 
 #### 3. Nginx (VPS)
+
 ```bash
 # Build locally
 npm run build
@@ -418,7 +466,7 @@ server {
   listen 80;
   server_name admin.nexent.com;
   root /var/www/admin;
-  
+
   location / {
     try_files $uri $uri/ /index.html;
   }
@@ -426,6 +474,7 @@ server {
 ```
 
 #### 4. Docker
+
 ```dockerfile
 # Dockerfile
 FROM node:18-alpine as build
@@ -464,6 +513,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ## 🐛 Error Handling
 
 ### Sentry Integration
+
 Automatically tracks and reports errors:
 
 ```javascript
@@ -478,12 +528,13 @@ Sentry.init({
 ```
 
 ### API Error Handling
+
 ```javascript
 try {
-  await axiosInstance.post('/api/admin/products', data);
-  toast.success('Success!');
+  await axiosInstance.post("/api/admin/products", data);
+  toast.success("Success!");
 } catch (error) {
-  const message = error.response?.data?.error || 'Something went wrong';
+  const message = error.response?.data?.error || "Something went wrong";
   toast.error(message);
   Sentry.captureException(error);
 }
@@ -492,6 +543,7 @@ try {
 ## 🧪 Testing
 
 ### Manual Testing Checklist
+
 - [ ] Login with @nexent.in email
 - [ ] Login fails with non-admin email
 - [ ] Dashboard loads all statistics
@@ -510,21 +562,25 @@ try {
 ### Common Issues
 
 **Issue: "Cannot connect to API"**
+
 - Solution: Check `VITE_API_URL` in `.env`
 - Ensure backend is running on correct port
 - Verify CORS settings in backend
 
 **Issue: "Unauthorized access"**
+
 - Solution: Use @nexent.in email to login
 - Check Clerk configuration
 - Verify backend auth middleware
 
 **Issue: "Images not uploading"**
+
 - Solution: Check Cloudinary credentials in backend
 - Verify file size limits (max 5MB recommended)
 - Check network tab for upload errors
 
 **Issue: "Build fails"**
+
 - Solution: Delete `node_modules` and `package-lock.json`
 - Run `npm install` again
 - Check Node.js version (requires >= 18.x)
@@ -532,6 +588,7 @@ try {
 ## 📈 Analytics & Monitoring
 
 ### Key Metrics to Track:
+
 - Average order value
 - Orders per day
 - Product views
@@ -540,6 +597,7 @@ try {
 - Revenue trends
 
 ### Sentry Dashboard:
+
 Monitor errors, performance, and user sessions at `https://sentry.io`
 
 ## 🤝 Contributing
